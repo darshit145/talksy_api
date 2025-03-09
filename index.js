@@ -28,7 +28,7 @@ const app=express();
 
 
 app.use(express.json());
-
+// app.use(express.urlencoded({extended:false}));
 app.get("/api/list_all_user",async(req,res)=>{
     console.log(req.body);
     const result=await user.find({});
@@ -59,13 +59,12 @@ app.post("/api/login",async(req,res)=>{
     
             return res.status(201).json({ user_id: newUser._id });
         } catch (error) {
+            console.error(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${error}`);
             // Check if the error is a duplicate key error (MongoDB code 11000)
             if (error.code === 11000) {
                 return res.status(400).json({ message: "User already exists" });
             }
-    
-            console.error("Error in /api/login:", error);
-            return res.status(500).json({ message: "Internal Server Error" });
+            return res.status(500).json({ message: "Internal Server Error :501" });
         }
 });
 
