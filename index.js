@@ -1,8 +1,11 @@
 const express=require("express");
 const mongo=require("mongoose");
+const app=express();
 
 // Connect to MongoDB
-mongo.connect('mongodb://localhost:27017/talksy_alluser');
+mongo.connect('mongodb://localhost:27017/talksy_alluser')
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => console.error("❌ MongoDB Connection Error:", err));
 const userLoginSchema=new mongo.Schema({
     u_email:{
         type:String,
@@ -17,13 +20,36 @@ const userLoginSchema=new mongo.Schema({
         type:String,
         required:true,
     },
-
-
-    
+    u_messaging:{
+        type:String,
+    },
+    U_date_ofBirth:{
+        type:String,
+    },
+    u_activestatus:{
+        type:Number,
+        default: 0
+    },
+    u_lastactive:{
+        type:String,
+    },
+    u_mobileno:{
+        type:String,
+    },
+    u_bio:{
+        type:String,
+    },
+    u_location:{
+        type:String,
+    },    
+},{
+    timestamps:true
 });
 
+
 const user=mongo.model("user",userLoginSchema);
-const app=express();
+
+
 
 
 
@@ -55,9 +81,10 @@ app.post("/api/login",async(req,res)=>{
                 u_email: req.body.u_email,
                 u_name: req.body.u_name,
                 u_photo: req.body.u_photo,
+                u_messaging:req.body.u_messaging
             });
     
-            return res.status(201).json({ user_id: newUser._id });
+            return res.status(201).json({ message: newUser._id });
         } catch (error) {
             console.error(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>${error}`);
             // Check if the error is a duplicate key error (MongoDB code 11000)
@@ -67,8 +94,23 @@ app.post("/api/login",async(req,res)=>{
             return res.status(500).json({ message: "Internal Server Error :501" });
         }
 });
+app.get("/api/user/:id", async (req, res) => {
+    try {
+        const userId = req.params.id || req.query.id; // Handle both formats
 
-app.listen(6000,()=>{
+        const userData = await user.findById(userId);
+        if (!userData) return res.status(404).json({ message: "User not found" });
+
+        return res.status(200).json(userData);
+    } catch (error) {
+        console.error(`Error Fetching User: ${error}`);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+
+
+
+app.listen(8000,()=>{
     console.log("SERVER start");
 })
 
