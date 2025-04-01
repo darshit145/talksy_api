@@ -5,7 +5,8 @@ const Message = require("./user_msg");
 const RecentChat=require("./recent_chates");
 
 // Connect to MongoDB
-mongo.connect('mongodb://localhost:27017/talksy_alluser')
+// mongodb+srv://Darshit:t5hrAUZWaHmgIVEO@cluster0.3tn6jax.mongodb.net/
+mongo.connect('mongodb+srv://Darshit:t5hrAUZWaHmgIVEO@cluster0.3tn6jax.mongodb.net/')
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => console.error("❌ MongoDB Connection Error:", err));
 const userLoginSchema=new mongo.Schema({
