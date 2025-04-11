@@ -4,6 +4,14 @@ const app=express();
 const Message = require("./user_msg");
 const RecentChat=require("./recent_chates");
 
+const http=require("http");
+const path=require("path");
+const{Server}=require("socket.io");
+
+
+const server=http.createServer(app);
+const io=new Server(server);
+
 // Connect to MongoDB
 // mongodb+srv://Darshit:t5hrAUZWaHmgIVEO@cluster0.3tn6jax.mongodb.net/
 mongo.connect('mongodb+srv://Darshit:t5hrAUZWaHmgIVEO@cluster0.3tn6jax.mongodb.net/')
@@ -105,7 +113,7 @@ app.post("/api/login",async(req,res)=>{
             const existingUser = await user.findOne({ u_email: req.body.u_email });
     
             if (existingUser) {
-                return res.status(statusCode200).json({ message: existingUser});
+                return res.status(statusCode200).json({ newUser: existingUser});
             }
     
             // If the user does not exist, create a new one
@@ -266,9 +274,9 @@ app.get("/api/listchat/:id", async (req, res) => {
 });
 
 
-app.listen(8000,()=>{
-    console.log("SERVER start");
-})
+// app.listen(8000,()=>{
+//     console.log("SERVER start");
+// })
 
 async function updateRecentChats(userId, chatUserId) {
     try {
@@ -301,6 +309,39 @@ async function updateRecentChats(userId, chatUserId) {
         console.error("Error updating recent chats:", error);
     }
 }
+
+io.on("connection",(socket)=>{
+    console.log(socket.id);
+
+    socket.on("dododo", (userId) => {
+        console.log(userId);
+        socket.id=userId;
+    });
+    
+    socket.on("user-message",async(msg,from,to,day,time)=>{
+        console.log(`${socket.id} from ${from} to the ${to} this is the day ${day} and this is the Time ${time}`);
+        if(true){
+            const newMessage = new Message({
+                msg,
+                from,
+                to,
+                dateSendingTime,
+                day,
+                readStatus: 0 // Default unread
+            });
+            await newMessage.save();
+            return io.to(to).emit("message",msg);
+        }
+        io.emit("message",msg);
+    });
+});
+
+app.use(express.static(path.resolve("./public")));
+app.get("/thelivechat/",(req,res)=>{
+    return res.sendFile("/public/index.html");
+
+});
+server.listen(5000)
 
 
 /*

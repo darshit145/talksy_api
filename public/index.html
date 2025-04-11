@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat App</title>
+</head>
+
+<body>
+    <h1>Chattik</h1>
+    <input type="text" id="text"/>
+    <input type="text" id="whom"/>
+    <button id="btnId">send</button>
+    <button id="btnId2">register</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <div id="div"></div>
+    <script>
+        const socket=io();
+        const text=document.getElementById("text");
+        const text2=document.getElementById("whom");
+        const btnId=document.getElementById("btnId");
+        const btnId2=document.getElementById("btnId2");
+        const div=document.getElementById("div");
+        btnId2.addEventListener('click',e => {
+           
+            socket.emit("dododo",text2.value)
+            
+        });
+        
+        btnId.addEventListener('click',e => {
+            const msg=text.value;
+            console.log(msg);
+            socket.emit("user-message",msg,"dfachara7",text2.value);
+        });
+        socket.on("message",e=>{
+            console.log(e);
+            const r=document.createElement("p");
+            r.innerText=e;
+            div.append(r);
+        });
+    </script>
+</body>
+
+</html>
