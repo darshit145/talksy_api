@@ -151,6 +151,41 @@ app.get("/api/user/:id", async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
+// Update the existing user info based on ID
+app.put("/api/updateuser/:id", async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        // Find user by ID and update with new data
+        const updatedUser = await user.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    u_email:req.body.u_email,
+                    u_name:req.body.u_name,
+                    u_photo:req.body.u_photo,
+                    u_messaging:req.body.u_messaging,
+                    U_date_ofBirth:req.body.U_date_ofBirth,
+                    u_activestatus:req.body.u_activestatus ,
+                    u_lastactive:req.body.u_lastactive ,
+                    u_mobileno:req.body.u_mobileno ,
+                    u_bio:req.body.u_bio ,
+                    u_location:req.body.u_location 
+                }
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(statusCode200).json({ message: "User updated successfully", updatedUser });
+    } catch (error) {
+        console.error(`Error Updating User: ${error}`);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
 
 //send the Msg to the user 
 app.post("/api/send_msg", async (req, res) => {
