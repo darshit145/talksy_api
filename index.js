@@ -345,38 +345,38 @@ async function updateRecentChats(userId, chatUserId) {
     }
 }
 
-// io.on("connection",(socket)=>{
-//     console.log(socket.id);
+io.on("connection",(socket)=>{
+    console.log(socket.id);
 
-//     socket.on("dododo", (userId) => {
-//         console.log(userId);
-//         socket.id=userId;
-//     });
+    socket.on("dododo", (userId) => {
+        console.log(userId);
+        socket.id=userId;
+    });
     
-//     socket.on("user-message",async(msg,from,to,day,time)=>{
-//         console.log(`${socket.id} from ${from} to the ${to} this is the day ${day} and this is the Time ${time}`);
-//         if(true){
-//             const newMessage = new Message({
-//                 msg,
-//                 from,
-//                 to,
-//                 dateSendingTime,
-//                 day,
-//                 readStatus: 0 // Default unread
-//             });
-//             await newMessage.save();
-//             return io.to(to).emit("message",msg);
-//         }
-//         io.emit("message",msg);
-//     });
-// });
+    socket.on("user-message",async(msg,from,to,day,time)=>{
+        console.log(`${socket.id} from ${from} to the ${to} this is the day ${day} and this is the Time ${time}`);
+        if(true){
+            const newMessage = new Message({
+                msg,
+                from,
+                to,
+                dateSendingTime,
+                day,
+                readStatus: 0 // Default unread
+            });
+            await newMessage.save();
+            return io.to(to).emit("message",msg);
+        }
+        io.emit("message",msg);
+    });
+});
 
-// app.use(express.static(path.resolve("./public")));
-// app.get("/thelivechat/",(req,res)=>{
-//     return res.sendFile("/public/index.html");
+app.use(express.static(path.resolve("./public")));
+app.get("/thelivechat/",(req,res)=>{
+    return res.sendFile("/public/index.html");
 
-// });
-// server.listen(5000)
+});
+server.listen(5000)
 
 
 /*
